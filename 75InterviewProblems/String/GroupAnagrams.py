@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List
 class Solution:
 
@@ -5,7 +6,7 @@ class Solution:
         if len(s) != len(t): return False
         sHash,tHash = {} , {}
         for i in range(len(s)):
-            sHash[s[i]] = 1 + sHash.get(s[i], 0)
+            sHash[s[i]] = 1 + sHash.get(s[i],0)
             tHash[t[i]] = 1 + tHash.get(t[i],0)
         
         for key in sHash:
@@ -14,29 +15,34 @@ class Solution:
         return True
 
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        if len(strs) == 1:
+            return [[strs[0]]]
         input = strs.copy()
-        print(input)
         output = []
         i = len(input)-1
-        while i > 0:
+        while len(input)> 0:
             currentElement = input.pop()
-            i = len(input)-1
-            j = i
             holding = []
             currentGroup = [currentElement]
-            while j >= 0:
-                print(input, j)
+            while len(input)> 0:
                 nextElement = input.pop()
                 if self.isAnagram(currentElement,nextElement):
                     currentGroup.append(nextElement)
-                    i-1
                 else:
                     holding.append(nextElement)
-                j -= 1
             output.append(currentGroup)
             input = holding
         return output
 
-s = Solution()
 
-print(s.groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
+class Solution2:
+    def groupAnagrams(self, strs: List[str]) -> List[str]:
+        res = defaultdict(list)
+        
+        for s in strs:
+            count = [0] * 26
+            for c in s:
+                count[ord(c) - ord("a")] += 1
+
+            res[tuple(count)].append(s)
+        return res.values()
